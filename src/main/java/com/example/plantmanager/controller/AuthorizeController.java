@@ -15,18 +15,4 @@ public class AuthorizeController {
 		return "ALL AUTHORIZED";
 	}
 	
-	@GetMapping("/admin")
-	public String adminAccess() {
-		return "ADMIN AUTHORIZED";
-	}
-	
-	@GetMapping("/user")
-	public String userAccess() {
-		return "USER AUTHORIZED";
-	}
-	
-	@GetMapping("/manager")
-	public String managerAccess() {
-		return "MANAGER AUTHORIZED";
-	}
 }

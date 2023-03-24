@@ -1,0 +1,80 @@
+package com.example.plantmanager.model;
+
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "machine")
+public class Machine {
+	
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "machine_id")
+	private Long id;
+	
+	@Column(name = "machine_name")
+	private String machineName;
+	
+	@Column(name = "machien_desc")
+	private String machineDesc;
+
+	@ManyToMany(fetch = FetchType.EAGER, cascade =  CascadeType.ALL)
+	@JoinTable(name = "machine_operation", joinColumns = @JoinColumn(name="machine_id"),
+	inverseJoinColumns = @JoinColumn(name = "operation_id"))
+	private Set<Operation> operations;
+	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getMachineName() {
+		return machineName;
+	}
+
+	public void setMachineName(String machineName) {
+		this.machineName = machineName;
+	}
+
+	public String getMachineDesc() {
+		return machineDesc;
+	}
+
+	public void setMachineDesc(String machineDesc) {
+		this.machineDesc = machineDesc;
+	}
+
+	public Set<Operation> getOperations() {
+		return operations;
+	}
+
+	public void setOperations(Set<Operation> operations) {
+		this.operations = operations;
+	}
+
+	public Machine(Long id, String machineName, String machineDesc) {
+		super();
+		this.id = id;
+		this.machineName = machineName;
+		this.machineDesc = machineDesc;
+	}
+
+	public Machine() {
+		super();
+	}
+	
+}
