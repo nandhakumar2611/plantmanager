@@ -1,5 +1,6 @@
 package com.example.plantmanager.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.example.plantmanager.model.Role;
@@ -18,6 +19,8 @@ import com.example.plantmanager.model.Role;
 
 public interface RoleService {
 
+	List<Role> getAllRole();
+	
 	Optional<Role> findByRole(String role);
 	
 }

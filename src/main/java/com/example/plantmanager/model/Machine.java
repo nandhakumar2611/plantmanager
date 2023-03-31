@@ -1,5 +1,6 @@
 package com.example.plantmanager.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -15,7 +16,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "machine")
+@Table(name = "machines")
 public class Machine {
 	
 	@Id
@@ -29,10 +30,12 @@ public class Machine {
 	@Column(name = "machien_desc")
 	private String machineDesc;
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade =  CascadeType.ALL)
-	@JoinTable(name = "machine_operation", joinColumns = @JoinColumn(name="machine_id"),
-	inverseJoinColumns = @JoinColumn(name = "operation_id"))
-	private Set<Operation> operations;
+	@ManyToMany(fetch = FetchType.LAZY, 
+				cascade = {CascadeType.PERSIST,CascadeType.MERGE})
+	@JoinTable(name = "machine_operation", 
+				joinColumns = {@JoinColumn(name="machine_id")},
+				inverseJoinColumns = {@JoinColumn(name = "operation_id")})
+	private Set<Operation> operations = new HashSet<>();
 	
 	public Long getId() {
 		return id;
@@ -66,15 +69,24 @@ public class Machine {
 		this.operations = operations;
 	}
 
-	public Machine(Long id, String machineName, String machineDesc) {
-		super();
-		this.id = id;
+	public Machine(String machineName, String machineDesc) {
 		this.machineName = machineName;
 		this.machineDesc = machineDesc;
 	}
 
 	public Machine() {
-		super();
 	}
 	
+	public void addOperation(Operation operation) {
+		this.operations.add(operation);
+		operation.getMachines().add(this);
+	}
+	
+	public void removeOperation(Long operationid) {
+		Operation operation = this.operations.stream().filter(operationdelete -> operationdelete.getId() == operationid).findFirst().orElse(null);
+		if(operation != null) {
+			this.operations.remove(operation);
+			operation.getMachines().remove(this);
+		}
+	}
 }

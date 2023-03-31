@@ -1,7 +1,9 @@
 package com.example.plantmanager.model;
 
+import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,6 +12,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
 * Operation entity to represent a Operation of the {@link Machine} in the system.
@@ -21,7 +25,7 @@ import javax.persistence.Table;
 */
 
 @Entity
-@Table(name = "operation")
+@Table(name = "operations")
 public class Operation {
 
 	@Id
@@ -35,8 +39,11 @@ public class Operation {
 	@Column(name = "operation_desc")
 	private String operationDesc;
 
-	@ManyToMany(mappedBy = "operations", fetch = FetchType.LAZY)
-	private Set<Machine> machine;
+	@ManyToMany(fetch = FetchType.LAZY, 
+				cascade = {CascadeType.PERSIST,CascadeType.MERGE}, 
+				mappedBy = "operations")
+	@JsonIgnore
+	private Set<Machine> machines = new HashSet<>();
 	
 	public Long getId() {
 		return id;
@@ -62,16 +69,15 @@ public class Operation {
 		this.operationDesc = operationDesc;
 	}
 
-	public Set<Machine> getMachine() {
-		return machine;
+	public Set<Machine> getMachines() {
+		return machines;
 	}
 
-	public void setMachine(Set<Machine> machine) {
-		this.machine = machine;
+	public void setMachines(Set<Machine> machines) {
+		this.machines = machines;
 	}
 
 	public Operation() {
-		super();
 	}
 	
 }
