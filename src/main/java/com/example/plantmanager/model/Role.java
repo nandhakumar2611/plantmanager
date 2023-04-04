@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 /**
 * Role entity to represent a ROLE of the {@link User} in the system.
 * 
@@ -26,7 +28,7 @@ import javax.persistence.Table;
 * 
 * @author Nandha Kumar
 * @version 1.0
-* @since 14-03-2023
+* @since March 2023
 * 
 */
 
@@ -46,7 +48,7 @@ public class Role {
      * Defining the Many-to-Many relation of users and roles. A Role can belong
      * to many Users and many Users can belong to a Role.
      */
-    
+    @JsonIgnore
     @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
 	private Set<User> users;
 	  

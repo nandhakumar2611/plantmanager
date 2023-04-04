@@ -2,6 +2,13 @@ package com.example.plantmanager.controller;
 
 import java.util.List;
 
+/**
+ * @author Nandha Kumar
+ * @version 1.0
+ * @since March 2023
+ *
+ */
+
 public class JwtResponse {
 	
 	private String token;

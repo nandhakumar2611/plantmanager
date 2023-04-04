@@ -11,4 +11,6 @@ import com.example.plantmanager.model.Machine;
 public interface MachineRepository extends JpaRepository<Machine, Long>{
 
 	List<Machine> findMachinesByOperationsId(Long id);
+	
+	Machine findByMachineName(String machinename);
 }

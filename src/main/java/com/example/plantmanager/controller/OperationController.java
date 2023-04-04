@@ -19,8 +19,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.plantmanager.model.Operation;
 import com.example.plantmanager.service.OperationService;
 
+/**
+ * @author Nandha Kumar
+ * @version 1.0
+ * @since March 2023
+ *
+ */
+
 @RestController
-@RequestMapping("api/v1/operation/")
+@RequestMapping("api/operation/")
 public class OperationController {
 
 	@Autowired

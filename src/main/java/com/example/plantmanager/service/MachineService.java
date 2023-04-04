@@ -19,4 +19,6 @@ public interface MachineService {
 	
 	Boolean existsById(Long id);
 	
+	Machine findByMachineName(String machinename);
+	
 }

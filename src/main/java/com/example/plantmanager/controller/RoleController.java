@@ -13,8 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.plantmanager.model.Role;
 import com.example.plantmanager.service.RoleService;
 
+/**
+ * @author Nandha Kumar
+ * @version 1.0
+ * @since March 2023
+ *
+ */
+
 @RestController
-@RequestMapping("/api/v1/role/")
+@RequestMapping("/api/role/")
 public class RoleController {
 
 	@Autowired

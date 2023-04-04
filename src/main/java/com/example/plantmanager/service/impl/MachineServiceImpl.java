@@ -46,5 +46,9 @@ public class MachineServiceImpl implements MachineService{
 		return machineRepository.findMachinesByOperationsId(id);
 	}
 
+	@Override
+	public Machine findByMachineName(String machinename) {
+		return machineRepository.findByMachineName(machinename);
+	}
 
 }
