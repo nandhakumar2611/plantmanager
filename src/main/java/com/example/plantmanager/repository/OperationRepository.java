@@ -1,6 +1,5 @@
 package com.example.plantmanager.repository;
 
-
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,4 +11,7 @@ import com.example.plantmanager.model.Operation;
 public interface OperationRepository extends JpaRepository<Operation, Long>{
 	
 	List<Operation> findOperationsByMachinesId(Long id);
+	
+	List<Operation> findOperationsByProductsId(Long id);
+
 }

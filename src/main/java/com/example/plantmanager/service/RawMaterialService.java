@@ -15,4 +15,7 @@ public interface RawMaterialService {
 	
 	void deleteById(Long id);
 
+	List<RawMaterial> findRawMaterialsByProductsId(Long id);
+	
+	Boolean existsById(Long id);
 }

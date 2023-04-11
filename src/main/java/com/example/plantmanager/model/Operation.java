@@ -45,6 +45,12 @@ public class Operation {
 	@JsonIgnore
 	private Set<Machine> machines = new HashSet<>();
 	
+	@ManyToMany(fetch = FetchType.LAZY, 
+			cascade = {CascadeType.PERSIST,CascadeType.MERGE}, 
+			mappedBy = "operations")
+	@JsonIgnore
+	private Set<Product> products = new HashSet<>();
+	
 	public Long getId() {
 		return id;
 	}
@@ -75,6 +81,14 @@ public class Operation {
 
 	public void setMachines(Set<Machine> machines) {
 		this.machines = machines;
+	}
+
+	public Set<Product> getProducts() {
+		return products;
+	}
+
+	public void setProducts(Set<Product> products) {
+		this.products = products;
 	}
 
 	public Operation() {

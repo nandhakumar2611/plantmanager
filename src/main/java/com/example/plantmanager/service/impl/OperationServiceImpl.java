@@ -46,4 +46,9 @@ public class OperationServiceImpl implements OperationService{
 		return operationRepository.existsById(id);
 	}
 
+	@Override
+	public List<Operation> findOperationsByProductsId(Long id) {
+		return operationRepository.findOperationsByProductsId(id);
+	}
+
 }

@@ -83,7 +83,9 @@ public class Machine {
 	}
 	
 	public void removeOperation(Long operationid) {
-		Operation operation = this.operations.stream().filter(operationdelete -> operationdelete.getId() == operationid).findFirst().orElse(null);
+		Operation operation = this.operations.stream().
+				filter(operationdelete -> operationdelete.getId() == operationid).
+				findFirst().orElse(null);
 		if(operation != null) {
 			this.operations.remove(operation);
 			operation.getMachines().remove(this);

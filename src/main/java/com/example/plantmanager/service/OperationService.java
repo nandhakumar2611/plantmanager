@@ -17,5 +17,7 @@ public interface OperationService {
 	
 	List<Operation> findOperationsByMachinesId(Long id);
 	
+	List<Operation> findOperationsByProductsId(Long id);
+	
 	Boolean existsById(Long id);
 }
