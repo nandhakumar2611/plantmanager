@@ -89,27 +89,6 @@ public class ProductController {
 		return new ResponseEntity<Product>(HttpStatus.OK);
 	}
 	
-	@PostMapping("/product/{productid}/rawmaterial")
-	public ResponseEntity<RawMaterial> addRawmaterial(@PathVariable Long productid,@RequestBody RawMaterial addrawMaterial) {
-		
-		RawMaterial rawMaterial = productService.findById(productid).map(product -> {
-			long rawMaterialId = addrawMaterial.getId();
-			
-			if(rawMaterialId != 0L) {
-				RawMaterial findRawMaterial = rawMaterialService.findById(rawMaterialId)
-						.orElseThrow(() -> new ResourceNotFoundException("NOT FOUND RAW MATERUAL WITH ID "+rawMaterialId));
-				product.addRawMaterial(findRawMaterial);
-				productService.saveProduct(product);
-				return findRawMaterial;
-			}
-			
-			product.addRawMaterial(addrawMaterial);
-			return rawMaterialService.saveRawMaterial(addrawMaterial);
-		}).orElseThrow(() -> new ResourceNotFoundException("NOT FOUND PRODUCT WITH ID "+productid));
-		
-		return new ResponseEntity<RawMaterial>(rawMaterial,HttpStatus.CREATED);
-	}
-	
 	@GetMapping("/product/{id}/rawmaterial")
 	public ResponseEntity<List<RawMaterial>> getAllRawMaterialByProductId(@PathVariable Long id) {
 		
@@ -132,39 +111,6 @@ public class ProductController {
 		return new ResponseEntity<List<Product>>(product,HttpStatus.OK);
 	}
 	
-	@DeleteMapping("/product/{productid}/rawmaterial/{rawmaterialid}")
-	public ResponseEntity<?> deleteRawMaterialFromProduct(@PathVariable Long productid, @PathVariable Long rawmaterialid) {
-		
-		Product product = productService.findById(productid)
-				.orElseThrow(() -> new ResourceNotFoundException("NOT FOUND MACHINE WITH ID: " + productid));
-		
-		product.removeRawMaterial(rawmaterialid);
-		productService.saveProduct(product);
-		
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-	}
-	
-	@PostMapping("/product/{productid}/operation")
-	public ResponseEntity<Operation> addOperation(@PathVariable Long productid,@RequestBody Operation addoperation) {
-		
-		Operation operation = productService.findById(productid).map(product -> {
-			long operationId = addoperation.getId();
-			
-			if(operationId != 0L) {
-				Operation findOperation = operationService.findById(operationId)
-						.orElseThrow(() -> new ResourceNotFoundException("NOT FOUND RAW MATERUAL WITH ID "+operationId));
-				product.addOperation(findOperation);
-				productService.saveProduct(product);
-				return findOperation;
-			}
-			
-			product.addOperation(addoperation);
-			return operationService.saveOperation(addoperation);
-		}).orElseThrow(() -> new ResourceNotFoundException("NOT FOUND PRODUCT WITH ID "+productid));
-		
-		return new ResponseEntity<Operation>(operation,HttpStatus.CREATED);
-	}
-	
 	@GetMapping("/product/{id}/operation")
 	public ResponseEntity<List<Operation>> getAllOperationByProductId(@PathVariable Long id) {
 		
@@ -185,18 +131,6 @@ public class ProductController {
 		
 		List<Product> product = productService.findProductsByOperationsId(id);
 		return new ResponseEntity<List<Product>>(product,HttpStatus.OK);
-	}
-	
-	@DeleteMapping("/product/{productid}/operation/{operationid}")
-	public ResponseEntity<?> deleteOperationFromProduct(@PathVariable Long productid, @PathVariable Long operationid) {
-		
-		Product product = productService.findById(productid)
-				.orElseThrow(() -> new ResourceNotFoundException("NOT FOUND PRODUCT WITH ID: " + productid));
-		
-		product.removeOperation(operationid);
-		productService.saveProduct(product);
-		
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 	
 }

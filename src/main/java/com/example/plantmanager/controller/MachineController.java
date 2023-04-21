@@ -1,6 +1,7 @@
 package com.example.plantmanager.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.plantmanager.dto.MachineRequest;
 import com.example.plantmanager.exception.ResourceNotFoundException;
 import com.example.plantmanager.model.Machine;
 import com.example.plantmanager.model.Operation;
@@ -41,13 +43,32 @@ public class MachineController {
 	@Autowired
 	private OperationService operationService;
 	
-//	RESTAPI : Create New Machine Without adding Operation
 	@PostMapping("/machine")
 	public ResponseEntity<Machine> createMachine(@RequestBody Machine machine) {
 		return ResponseEntity.ok(machineService.saveMachine(machine));
 	}
 	
-//	RESTAPI : Get All Machine List
+	@PostMapping("/createmachine")
+	public ResponseEntity<?> saveMachine(@RequestBody MachineRequest machineRequest) {
+		
+		Machine machine = new Machine(machineRequest.getMachineName(), machineRequest.getMachineDesc());
+		Set<Long> machineOperations = machineRequest.getOperation();
+		Set<Operation> operations = new HashSet<>();
+		if(machineOperations == null) {
+			System.out.println("OPERATION ARE NULL");
+		}
+		else {
+			machineOperations.forEach(operation -> {
+				Operation findoperation = operationService.findById(operation).
+						orElseThrow(() -> new RuntimeException("OPERATION NOT FOUND"));
+				operations.add(findoperation);
+			});
+			machine.setOperations(operations);
+			machineService.saveMachine(machine);
+		}
+		return ResponseEntity.ok(new MessageResponse("MACHINE SAVED SUCCESSFULLY!..."));
+	}
+	
 	@GetMapping("/machine")
 	public ResponseEntity<List<Machine>> getAllMachine() {
 		
@@ -58,12 +79,13 @@ public class MachineController {
 		if(machine.isEmpty()) {
 			return new ResponseEntity<List<Machine>>(HttpStatus.NO_CONTENT);
 		}
+		
 		return new ResponseEntity<List<Machine>>(machine,HttpStatus.OK);
 	}
 	
-//	RESTAPI : Get Machine By Id
 	@GetMapping("/machine/{id}")
 	public ResponseEntity<Machine> getMachineById(@PathVariable Long id) {
+		
 		Optional<Machine> machineData = machineService.findById(id);
 		
 		if(machineData.isPresent()) {
@@ -74,7 +96,6 @@ public class MachineController {
 		}
 	}
 	
-//	RESTAPI : Get Machine By Name
 	@GetMapping("/machines/{machinename}")
 	public ResponseEntity<Machine> getMachineByName(@PathVariable String machinename) {
 		Machine machineData = machineService.findByMachineName(machinename);
@@ -87,7 +108,6 @@ public class MachineController {
 		}
 	}
 	
-//	RESTAPI : Update Machine By Id
 	@PutMapping("/machine/{id}")
 	public ResponseEntity<Machine> getMachineById(@PathVariable Long id,@RequestBody Machine machinedetails) {
 		Optional<Machine> machineData = machineService.findById(id);
@@ -103,7 +123,6 @@ public class MachineController {
 		}
 	}
 	
-//	RESTAPI : Delete Machine By Id
 	@DeleteMapping("/machine/{id}")
 	public ResponseEntity<Machine> deleteMachine(@PathVariable Long id) {
 
@@ -111,29 +130,6 @@ public class MachineController {
 		return new ResponseEntity<Machine>(HttpStatus.OK);
 	}
 	
-//	RESTAPI : Adding Operation to Machine By Machine Id
-	@PostMapping("/machines/{machineid}/operations")
-	public ResponseEntity<Operation> addOperation(@PathVariable Long machineid,@RequestBody Operation addoperation) {
-		
-		Operation operation = machineService.findById(machineid).map(machine -> {
-			long operationid = addoperation.getId();
-			
-			if(operationid != 0L) {
-				Operation findoperation = operationService.findById(operationid)
-						.orElseThrow(() -> new ResourceNotFoundException("NOT FOUND OPERATIONS WITH ID: "+ operationid));
-				machine.addOperation(findoperation);
-				machineService.saveMachine(machine);
-				return findoperation;
-			}
-			
-			machine.addOperation(addoperation);
-			return operationService.saveOperation(addoperation);
-		}).orElseThrow(() -> new ResourceNotFoundException("NOT FOUND MACHINE WITH ID: " + machineid ));
-		
-		return new ResponseEntity<>(operation,HttpStatus.CREATED);
-	}
-	
-//	RESTAPI : Get All Operation Under Machine By Machine Id
 	@GetMapping("/machines/{id}/operations")
 	public ResponseEntity<List<Operation>> getAllOperationByMachineId(@PathVariable Long id) {
 		
@@ -145,7 +141,6 @@ public class MachineController {
 		return new ResponseEntity<List<Operation>>(operation,HttpStatus.OK);
 	}
 	
-//	RESTAPI : Get All Machine Under Operation By Operation Id	
 	@GetMapping("/operations/{id}/machines")
 	public ResponseEntity<List<Machine>> getAllMachineByOperationId(@PathVariable Long id) {
 		
@@ -157,30 +152,55 @@ public class MachineController {
 		return new ResponseEntity<List<Machine>>(machine,HttpStatus.OK);
 	}
 	
-//	RESTAPI : Delete Operation Under Machine By Machine Id
-	@DeleteMapping("/machines/{machineid}/operations/{operationid}")
-	public ResponseEntity<?> deleteOperationFromMachine(@PathVariable Long machineid, @PathVariable Long operationid) {
-		
-		Machine machine = machineService.findById(machineid)
-				.orElseThrow(() -> new ResourceNotFoundException("NOT FOUND MACHINE WITH ID: " + machineid));
-		
-		machine.removeOperation(operationid);
-		machineService.saveMachine(machine);
-		
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-	}
 	
-//	RESTAPI : Adding Operation to Machine By Machine Id
-	@PutMapping("/{machineid}/operation/{operationid}")
-	public Machine assignOperationToMachine(@PathVariable Long machineid,@PathVariable Long operationid) {
+	@PutMapping("/{machineid}/operation")
+	public Machine assignOperationsToMachine(@PathVariable Long machineid,@RequestBody List<Long> operationid) {
 		
 		Set<Operation> operationset = null;
 		Machine machine = machineService.findById(machineid).get();
-		Operation operation = operationService.findById(operationid).get();
-		operationset = machine.getOperations();
-		operationset.add(operation);
+		for(int i=0;i<operationid.size();i++) {
+			Operation operation = operationService.findById(operationid.get(i)).get();
+			operationset = machine.getOperations();
+			operationset.add(operation);
+		}
 		machine.setOperations(operationset);
 		return machineService.saveMachine(machine);
+	}
+
+	@PostMapping("/{machineId}/operations")
+	public ResponseEntity<Machine> addOperationToMachine(@PathVariable Long machineId, @RequestBody List<Long> operationIds) {
+		
+		Optional<Machine> machine = machineService.findById(machineId);
+		if(machine.isPresent()) {
+			Set<Operation> operations = new HashSet<>();
+			for(Long operationId : operationIds) {
+				Optional<Operation> operation = operationService.findById(operationId);
+				if(operation.isPresent()) {
+					operations.add(operation.get());
+				}
+			}
+			machine.get().getOperations().addAll(operations);
+			machineService.saveMachine(machine.get());
+			return ResponseEntity.ok(machine.get());
+		}
+		else {
+			return ResponseEntity.notFound().build();
+		}
+	}
+	
+	@DeleteMapping("/{machineId}/operations/{operationId}")
+	public ResponseEntity<Machine> removeOperationFromMachine(@PathVariable Long machineId, @PathVariable Long operationId) {
+		
+		Optional<Machine> machine = machineService.findById(machineId);
+		Optional<Operation> operation = operationService.findById(operationId);
+		if(machine.isPresent() && operation.isPresent()) {
+			machine.get().getOperations().remove(operation.get());
+			machineService.saveMachine(machine.get());
+			return ResponseEntity.ok(machine.get());
+		}
+		else {
+			return ResponseEntity.notFound().build();
+		}
 	}
 	
 }

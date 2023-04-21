@@ -77,18 +77,4 @@ public class Machine {
 	public Machine() {
 	}
 	
-	public void addOperation(Operation operation) {
-		this.operations.add(operation);
-		operation.getMachines().add(this);
-	}
-	
-	public void removeOperation(Long operationid) {
-		Operation operation = this.operations.stream().
-				filter(operationdelete -> operationdelete.getId() == operationid).
-				findFirst().orElse(null);
-		if(operation != null) {
-			this.operations.remove(operation);
-			operation.getMachines().remove(this);
-		}
-	}
 }

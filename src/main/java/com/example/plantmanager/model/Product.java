@@ -92,35 +92,5 @@ public class Product {
 
 	public Product() {
 	}
-
-	public void addRawMaterial(RawMaterial rawMaterial) {
-		this.rawMaterials.add(rawMaterial);
-		rawMaterial.getProducts().add(this);
-	}
-	
-	public void removeRawMaterial(Long rawMaterialid) {
-		RawMaterial rawMaterial = this.rawMaterials.stream().
-				filter(rawMaterialdelete -> rawMaterialdelete.getId() == rawMaterialid).
-				findFirst().orElse(null);
-		if(rawMaterial != null) {
-			this.rawMaterials.remove(rawMaterial);
-			rawMaterial.getProducts().remove(this);
-		}
-	}
-	
-	public void addOperation(Operation operation) {
-		this.operations.add(operation);
-		operation.getProducts().add(this);
-	}
-	
-	public void removeOperation(Long operationid) {
-		Operation operation = this.operations.stream().
-				filter(operationdelete -> operationdelete.getId() == operationid).
-				findFirst().orElse(null);
-		if(operation != null) {
-			this.operations.remove(operation);
-			operation.getProducts().remove(this);
-		}
-	}
 	
 }
