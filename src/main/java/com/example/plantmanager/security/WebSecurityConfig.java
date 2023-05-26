@@ -64,7 +64,7 @@ public class WebSecurityConfig {
 			.exceptionHandling().authenticationEntryPoint(authenticationEntryPoint).and()
 			.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
 			.authorizeRequests()
-			.antMatchers("/api/auth/**").permitAll()
+			.antMatchers("/api/**/**").permitAll()
 			.anyRequest().authenticated();
 		
 		http.addFilterBefore(jwtAuthenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
